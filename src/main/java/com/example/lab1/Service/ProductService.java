@@ -1,18 +1,20 @@
 package com.example.lab1.Service;
 
-import com.example.lab1.Entity.Product;
+import com.example.lab1.Dto.ProductDto;
+import com.example.lab1.Entity.ProductEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ProductService {
-    List<Product> getAll();
+    List<ProductDto> getAll();
 
-    Product getById(Long id);
+    ProductDto getById(UUID id);
 
-    Product save(Product product);
+    ProductDto save(ProductDto productDto);
 
-    Product update(Long id, Product product);
+    ProductDto update(UUID id, ProductDto productDto);
 
-    void delete(Long id);
+    void delete(UUID id);
 
 }

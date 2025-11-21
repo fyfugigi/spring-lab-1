@@ -1,82 +1,60 @@
 package com.example.lab1.Service;
 
-import com.example.lab1.Entity.Product;
+import com.example.lab1.Dto.ProductDto;
+import com.example.lab1.Entity.ProductEntity;
+import com.example.lab1.Repository.ProductRepository;
+import com.example.lab1.Service.Exception.ProductNotFoundException;
+import com.example.lab1.Service.Mapper.ProductMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImplementation implements ProductService {
-    private final List<Product> productList = new ArrayList<>() {{
-        add(Product.builder()
-                .id(1L)
-                .color("green")
-                .name("apple")
-                .price(6.2)
-                .date(new Date())
-                .build());
-        add(Product.builder()
-                .id(2L)
-                .color("yellow")
-                .name("pineapple")
-                .price(11.6)
-                .date(new Date())
-                .build());
-        add(Product.builder()
-                .id(3L)
-                .color("white")
-                .name("arrow")
-                .price(3.2)
-                .build());
-        add(Product.builder()
-                .id(4L)
-                .color("black")
-                .name("pen")
-                .price(1.0)
-                .date(new Date())
-                .build());
-    }};
 
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
-    @Override
-    public List<Product> getAll() {
-        return productList;
+    public ProductServiceImplementation(ProductRepository productRepository, ProductMapper productMapper) {
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     @Override
-    public Product getById(Long id) {
-        return productList.stream().filter(product -> product.getId().equals(id)).findFirst().orElse(null);
+    @Transactional
+    public List<ProductDto> getAll() {
+        return productMapper.toDto(productRepository.findAll());
     }
 
     @Override
-    public Product save(Product product) {
-        product.setId((long) (productList.size() + 1));
-        product.setDate(new Date());
-        if (product.getColor() != null && product.getName() != null && product.getPrice() != null) {
-            productList.add(product);
-            return product;
-        }
-        return null;
+    @Transactional
+    public ProductDto getById(UUID id) {
+        return productMapper.toDto(productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id)));
     }
 
     @Override
-    public Product update(Long id, Product product) {
-        Product updateProduct = productList.stream().filter(p -> p.getId().equals(id)).findFirst().orElse(null);
-        if (updateProduct != null) {
-            if (product.getColor() != null && product.getName() != null && product.getPrice() != null) {
-                updateProduct.setColor(product.getColor());
-                updateProduct.setName(product.getName());
-                updateProduct.setPrice(product.getPrice());
-                return updateProduct;
-            }
-        }
-        return null;
+    @Transactional
+    public ProductDto save(ProductDto productDto) {
+        productDto.setDate(new Date());
+        return productMapper.toDto(productRepository.save(productMapper.toEntity(productDto)));
     }
 
     @Override
-    public void delete(Long id) {
-        productList.removeIf(product -> product.getId().equals(id));
+    @Transactional
+    public ProductDto update(UUID id, ProductDto productDto) {
+        ProductEntity productEntity = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
+        productEntity.setName(productDto.getName());
+        productEntity.setPrice(productDto.getPrice());
+        productEntity.setColor(productDto.getColor());
+        return productMapper.toDto(productRepository.save(productEntity));
+    }
+
+    @Override
+    @Transactional
+    public void delete(UUID id) {
+        productRepository.deleteById(id);
     }
 }
