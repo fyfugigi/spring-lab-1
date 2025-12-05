@@ -1,5 +1,6 @@
 package com.example.lab1.Controller;
 
+import com.example.lab1.Service.Exception.NotFoundException;
 import com.example.lab1.Service.Exception.ProductNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ProblemDetail;
@@ -21,6 +22,15 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(NOT_FOUND, ex.getMessage());
         problemDetail.setType(create("product-not-found"));
         problemDetail.setTitle("Product Not Found");
+        return ResponseEntity.status(NOT_FOUND).body(problemDetail);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleProductNotFoundException(NotFoundException ex) {
+        log.info("Not found exception raised");
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(NOT_FOUND, ex.getMessage());
+        problemDetail.setType(create("not-found"));
+        problemDetail.setTitle("Not Found");
         return ResponseEntity.status(NOT_FOUND).body(problemDetail);
     }
 }
