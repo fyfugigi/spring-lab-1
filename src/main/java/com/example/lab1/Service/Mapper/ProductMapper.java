@@ -4,7 +4,6 @@ import com.example.lab1.Dto.ProductDto;
 import com.example.lab1.Entity.ProductEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 import java.util.List;
 

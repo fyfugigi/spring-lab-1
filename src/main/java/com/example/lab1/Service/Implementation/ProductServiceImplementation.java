@@ -1,10 +1,11 @@
-package com.example.lab1.Service;
+package com.example.lab1.Service.Implementation;
 
 import com.example.lab1.Dto.ProductDto;
 import com.example.lab1.Entity.ProductEntity;
 import com.example.lab1.Repository.ProductRepository;
 import com.example.lab1.Service.Exception.ProductNotFoundException;
 import com.example.lab1.Service.Mapper.ProductMapper;
+import com.example.lab1.Service.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
